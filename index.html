@@ -44,8 +44,8 @@ form.addEventListener('submit', async (event) => {
       const data = await fetchResponse.json();
       console.log('Alert message:', data.message);
       alert(data.message);
-      form.reset();
-      hcaptcha.reset(); // 重置 hCaptcha
+      //form.reset();
+      //hcaptcha.reset(); // 重置 hCaptcha
     } else {
       alert('Error submitting form. Please try again.');
     }
