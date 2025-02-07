@@ -18,24 +18,25 @@
     <label for="message">Message:</label>
     <textarea id="message" name="message" required></textarea>
 
-    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
+    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div> <!-- 将 'your-site-key' 替换为您的实际站点密钥 -->
 
-    <button type="submit" id="submitButton">Submit</button> <!-- 修改为 type="button" -->
+    <button type="submit">Submit</button>
   </form>
 
   <script>
     const form = document.getElementById('submitForm');
-    const submitButton = document.getElementById('submitButton');
 
-    submitButton.addEventListener('click', async () => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
       // 检查 hCaptcha 是否已完成
       const hcaptchaResponse = hcaptcha.getResponse();
       if (!hcaptchaResponse) {
-        alert('请完成人机验证！'); // 提醒用户完成 hCaptcha 验证
-        return; // 阻止后续操作
+        alert('Please complete the hCaptcha verification.');
+        return;
       }
 
-      const formData = new FormData(form);
+      const formData = new FormData(event.target);
       formData.append('h-captcha-response', hcaptchaResponse); // 将 hCaptcha 响应添加到表单数据中
 
       try {
