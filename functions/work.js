@@ -9,14 +9,14 @@ async function handleRequest(request) {
         const formData = await request.formData();
         const username = formData.get('username');
         const email = formData.get('email');
-        const recaptchaResponse = formData.get('recaptcha_response');
+        const hcaptchaResponse = formData.get('h-captcha-response');
 
-        // 验证 reCAPTCHA
-        const secretKey = '6LeEjc8qAAAAAGTeC-GBehTB7E1B7uUvYgrVzDB-'; // 替换为您的密钥
-        const verificationResponse = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+        // 验证 hCaptcha
+        const secretKey = '你的secret_key'; // 替换为您的密钥
+        const verificationResponse = await fetch(`https://hcaptcha.com/siteverify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${secretKey}&response=${recaptchaResponse}&remoteip=${clientIP}`
+            body: `secret=${secretKey}&response=${hcaptchaResponse}&remoteip=${clientIP}`
         });
 
         const verificationResult = await verificationResponse.json();
@@ -25,7 +25,7 @@ async function handleRequest(request) {
             // 处理表单数据，例如存储到数据库
             return new Response(`表单提交成功！IP地址：${clientIP}`, { status: 200 });
         } else {
-            return new Response('reCAPTCHA 验证失败！', { status: 400 });
+            return new Response('hCaptcha 验证失败！', { status: 400 });
         }
     }
 
