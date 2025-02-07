@@ -39,19 +39,22 @@
           body: formData
         });
         console.log('Response:', response);
+const response = await fetch('/api/submit', {
+  method: 'POST',
+  body: formData
+});
 
-        if (response.ok) {
-          const data = await response.json();
-          alert(data.message);
-          form.reset();
-          hcaptcha.reset(); // 重置 hCaptcha
-        } else {
-          alert('Error submitting form. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again later.');
-      }
+if (response.ok) {
+  const data = await response.json();
+  console.log('Response data:', data); // 添加调试信息
+  alert(data.message + ' Random Value: ' + data.randomValue); // 提示后端传送来的随机数
+  form.reset();
+  hcaptcha.reset(); // 重置 hCaptcha
+} else {
+  console.error('Response error:', response); // 添加调试信息
+  alert('Error submitting form. Please try again.');
+}
+   
     });
   </script>
 </body>
