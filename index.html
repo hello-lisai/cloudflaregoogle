@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google reCAPTCHA v3 示例</title>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeXh88qAAAAAEKsCf9P6ceGNke0K7hWxtBwEauq"></script>
+</head>
+<body>
+    <h1>注册表单</h1>
+    <form id="myForm" action="your-server-endpoint" method="POST">
+        <label for="username">用户名:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="email">电子邮件:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <input type="hidden" id="recaptchaResponse" name="recaptcha_response">
+        
+        <button type="submit">提交</button>
+    </form>
+
+    <script>
+        document.getElementById('myForm').onsubmit = function(event) {
+            event.preventDefault(); // 阻止表单提交
+
+            grecaptcha.execute('6LeXh88qAAAAAEKsCf9P6ceGNke0K7hWxtBwEauq', {action: 'submit'}).then(function(token) {
+                document.getElementById('recaptchaResponse').value = token; // 将 token 存入隐藏字段
+                document.getElementById('myForm').submit(); // 提交表单
+            });
+        };
+    </script>
+</body>
+</html>
