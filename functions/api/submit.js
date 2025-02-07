@@ -28,8 +28,17 @@ export async function onRequestPost({ request, env }) {
 
     // Verify h-captcha token
     const secret = 'ES_2fe7d279e2474c25b2d6b213918fe463'; // 直接写入的 h-captcha 秘钥
-    const verifyUrl = `https://hcaptcha.com/siteverify?secret=${secret}&response=${token}`;
-    const verifyResponse = await fetch(verifyUrl, { method: 'POST' });
+    const verifyUrl = `https://hcaptcha.com/siteverify`;
+    const verifyResponse = await fetch(verifyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        secret: secret,
+        response: token,
+      }),
+    });
     const captchaResult = await verifyResponse.json();
 
     if (!captchaResult.success) {
