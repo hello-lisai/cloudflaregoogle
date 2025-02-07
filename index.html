@@ -24,8 +24,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             const myForm = document.getElementById('myForm');
             if (myForm) {
-                // 确保表单存在，然后添加类
-                myForm.classList.add('my-form-class');
+                myForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const formData = new FormData(myForm);
+                    const response = await fetch(myForm.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const text = await response.text();
+                    // 显示后端返回的数据
+                    alert(text);
+                });
             }
         });
     </script>
