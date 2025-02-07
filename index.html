@@ -20,40 +20,43 @@
   <script>
     const form = document.getElementById('submitForm');
 
-form.addEventListener('submit', async (event) => {
-  // 检查 hCaptcha 是否已完成
-  const captchaResponse = hcaptcha.getResponse();
-  if (captchaResponse.length === 0) {
-    event.preventDefault(); // 阻止表单提交
-    alert("请完成验证码验证！"); // 提示用户完成验证码
-    return; // 退出函数
-  }
+    form.addEventListener('submit', async (event) => {
+      // 检查 hCaptcha 是否已完成
+      const captchaResponse = hcaptcha.getResponse();
+      if (captchaResponse.length === 0) {
+        event.preventDefault(); // 阻止表单提交
+        alert("请完成验证码验证！"); // 提示用户完成验证码
+        return; // 退出函数
+      }
 
-  // 如果 hCaptcha 验证通过，继续处理表单提交
-  const formData = new FormData(event.target);
+      // 如果 hCaptcha 验证通过，继续处理表单提交
+      const formData = new FormData(event.target);
 
-  try {
-    console.log('Submitting form data:', Object.fromEntries(formData.entries()));
-    const fetchResponse = await fetch('/api/submit', {
-      method: 'POST',
-      body: formData
+      try {
+        console.log('Submitting form data:', Object.fromEntries(formData.entries()));
+        const fetchResponse = await fetch('/api/submit', {
+          method: 'POST',
+          body: formData
+        });
+        console.log('Response:', fetchResponse);
+
+        if (fetchResponse.ok) {
+          const data = await fetchResponse.json();
+          console.log('Alert message:', data.message);
+          alert(data.message);
+
+          // 生成一个随机值
+          const randomValue = Math.random().toString(36).substring(2, 15);
+          // 跳转到 help.html 页面，并附带随机值
+          window.location.href = `help.html?random=${randomValue}`;
+        } else {
+          alert('Error submitting form. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+      }
     });
-    console.log('Response:', fetchResponse);
-
-    if (fetchResponse.ok) {
-      const data = await fetchResponse.json();
-      console.log('Alert message:', data.message);
-      alert(data.message);
-      //form.reset();
-      //hcaptcha.reset(); // 重置 hCaptcha
-    } else {
-      alert('Error submitting form. Please try again.');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('An error occurred. Please try again later.');
-  }
-});
   </script>
 </body>
 </html>
