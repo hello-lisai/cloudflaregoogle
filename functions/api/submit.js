@@ -48,18 +48,24 @@ export async function onRequestPost({ request, env }) {
     // Extract user's IP address
     const userIp = request.headers.get('cf-connecting-ip') || 'unknown';
 
+    // Get current timestamp
+    const timestamp = new Date().toISOString();
+
+    // Generate a random value between 1 and 10
+    const randomValue = Math.floor(Math.random() * 10) + 1;
+
     // Initialize D1 database
     const db = env.D1_DATABASE;
 
     // Prepare SQL query to insert data into the database
-    const sql = `INSERT INTO submissions (username, email) VALUES (?, ?)`;
-    const params = [userIp, output.email];
+    const sql = `INSERT INTO submissions (address, timestamp, ip, random_value) VALUES (?, ?, ?, ?)`;
+    const params = [output.address, timestamp, userIp, randomValue];
 
     // Execute SQL query
     await db.prepare(sql).bind(...params).run();
 
-    // Return success response
-    return new Response(JSON.stringify({ message: 'Form submitted successfully' }), {
+    // Return success response with the random value
+    return new Response(JSON.stringify({ message: 'Form submitted successfully', randomValue: randomValue }), {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
