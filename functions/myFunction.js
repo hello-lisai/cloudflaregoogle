@@ -3,6 +3,8 @@ addEventListener('fetch', event => {
 });
 
 async function handleRequest(request) {
+    const clientIP = request.headers.get('cf-connecting-ip');
+
     if (request.method === 'POST') {
         const formData = await request.formData();
         const username = formData.get('username');
@@ -10,18 +12,18 @@ async function handleRequest(request) {
         const recaptchaResponse = formData.get('recaptcha_response');
 
         // 验证 reCAPTCHA
-        const secretKey = '6LeXh88qAAAAAFlc8jkIsch_s-fJDHyTCquvpa_-'; // 替换为您的密钥
+        const secretKey = '你的secret_key'; // 替换为您的密钥
         const verificationResponse = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${secretKey}&response=${recaptchaResponse}`
+            body: `secret=${secretKey}&response=${recaptchaResponse}&remoteip=${clientIP}`
         });
 
         const verificationResult = await verificationResponse.json();
 
         if (verificationResult.success) {
             // 处理表单数据，例如存储到数据库
-            return new Response('表单提交成功！', { status: 200 });
+            return new Response(`表单提交成功！IP地址：${clientIP}`, { status: 200 });
         } else {
             return new Response('reCAPTCHA 验证失败！', { status: 400 });
         }
@@ -29,4 +31,3 @@ async function handleRequest(request) {
 
     return new Response('只支持 POST 请求', { status: 405 });
 }
-
