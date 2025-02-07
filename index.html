@@ -19,5 +19,15 @@
         
         <button type="submit">提交</button>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const myForm = document.getElementById('myForm');
+            if (myForm) {
+                // 确保表单存在，然后添加类
+                myForm.classList.add('my-form-class');
+            }
+        });
+    </script>
 </body>
 </html>
