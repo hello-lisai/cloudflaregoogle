@@ -1,3 +1,5 @@
+import { D1Database } from '@cloudflare/workers-d1';
+
 /**
  * POST /api/submit
  */
@@ -10,7 +12,6 @@ export async function onRequestPost(context) {
     let input = await context.request.formData();
 
     // Convert FormData to JSON
-    // NOTE: Allows multiple values per key
     let output = {};
     for (let [key, value] of input) {
       let tmp = output[key];
@@ -21,6 +22,16 @@ export async function onRequestPost(context) {
       }
     }
 
+    // Initialize D1 database
+    const db = new D1Database(context.env.D1_DATABASE);
+
+    // Prepare SQL query to insert data into the database
+    const sql = `INSERT INTO submissions (username, email) VALUES (?, ?)`;
+    const params = [output.username, output.email];
+
+    // Execute SQL query
+    await db.execute(sql, params);
+
     // Return success response
     return new Response(JSON.stringify({ message: 'Form submitted successfully' }), {
       headers: {
@@ -28,6 +39,6 @@ export async function onRequestPost(context) {
       },
     });
   } catch (err) {
-    return new Response("Error parsing JSON content", { status: 400 });
+    return new Response(`Error: ${err.message}`, { status: 400 });
   }
 }
