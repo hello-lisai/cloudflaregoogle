@@ -1,23 +1,33 @@
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(event.target);
+/**
+ * POST /api/submit
+ */
+export async function onRequestPost(context) {
+  if (context.request.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405 });
+  }
 
   try {
-    const response = await fetch('/api/submit', {
-      method: 'POST',
-      body: formData
-    });
+    let input = await context.request.formData();
 
-    if (response.ok) {
-      const data = await response.json();
-      alert(data.message);
-      form.reset();
-    } else {
-      alert('Error submitting form. Please try again.');
+    // Convert FormData to JSON
+    // NOTE: Allows multiple values per key
+    let output = {};
+    for (let [key, value] of input) {
+      let tmp = output[key];
+      if (tmp === undefined) {
+        output[key] = value;
+      } else {
+        output[key] = [].concat(tmp, value);
+      }
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('An error occurred. Please try again later.');
+
+    // Return success response
+    return new Response(JSON.stringify({ message: 'Form submitted successfully' }), {
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+      },
+    });
+  } catch (err) {
+    return new Response("Error parsing JSON content", { status: 400 });
   }
-});
+}
