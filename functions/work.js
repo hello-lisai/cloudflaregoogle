@@ -12,7 +12,7 @@ async function handleRequest(request) {
         const recaptchaResponse = formData.get('recaptcha_response');
 
         // 验证 reCAPTCHA
-        const secretKey = '你的secret_key'; // 替换为您的密钥
+        const secretKey = '6LeEjc8qAAAAAGTeC-GBehTB7E1B7uUvYgrVzDB-'; // 替换为您的密钥
         const verificationResponse = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
