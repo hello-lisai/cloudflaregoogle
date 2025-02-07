@@ -65,7 +65,7 @@ export async function onRequestPost({ request, env }) {
     await db.prepare(sql).bind(...params).run();
 
     // Return success response with the random value
-    return new Response(JSON.stringify({ message: 'Form submitted successfully', randomValue: randomValue }), {
+    return new Response(JSON.stringify({ message: `你的随机值为 ${randomValue}` }), {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
