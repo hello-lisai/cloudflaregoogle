@@ -8,28 +8,35 @@
 </head>
 <body>
   <h1>Submit Your Information</h1>
-<form id="submitForm">
-  <label for="username">Name:</label>
-  <input type="text" id="username" name="username" required>
+  <form id="submitForm">
+    <label for="username">Name:</label>
+    <input type="text" id="username" name="username" required>
 
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-  <label for="message">Message:</label>
-  <textarea id="message" name="message" required></textarea>
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" required></textarea>
 
-  <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div> <!-- 将 'your-site-key' 替换为您的实际站点密钥 -->
+    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
 
-  <button type="submit">Submit</button>
-</form>
+    <button type="button" id="submitButton">Submit</button> <!-- 修改为 type="button" -->
+  </form>
 
   <script>
     const form = document.getElementById('submitForm');
+    const submitButton = document.getElementById('submitButton');
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+    submitButton.addEventListener('click', async () => {
+      // 检查 hCaptcha 是否已完成
+      const hcaptchaResponse = hcaptcha.getResponse();
+      if (!hcaptchaResponse) {
+        alert('请完成人机验证！'); // 提醒用户完成 hCaptcha 验证
+        return; // 阻止后续操作
+      }
 
-      const formData = new FormData(event.target);
+      const formData = new FormData(form);
+      formData.append('h-captcha-response', hcaptchaResponse); // 将 hCaptcha 响应添加到表单数据中
 
       try {
         console.log('Submitting form data:', Object.fromEntries(formData.entries()));
@@ -43,6 +50,7 @@
           const data = await response.json();
           alert(data.message);
           form.reset();
+          hcaptcha.reset(); // 重置 hCaptcha
         } else {
           alert('Error submitting form. Please try again.');
         }
