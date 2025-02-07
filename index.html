@@ -25,7 +25,7 @@
             document.getElementById('myForm').onsubmit = function(event) {
                 event.preventDefault(); // 阻止表单提交
 
-                grecaptcha.execute('你的site_key', {action: 'submit'}).then(function(token) {
+                grecaptcha.execute('6LeEjc8qAAAAAINlrj7IxQptdkY84vDnNFpvMDoy', {action: 'submit'}).then(function(token) {
                     document.getElementById('recaptchaResponse').value = token; // 将 token 存入隐藏字段
                     document.getElementById('myForm').submit(); // 提交表单
                 });
