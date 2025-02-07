@@ -1,41 +1,51 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hCaptcha 示例</title>
-    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submission Form</title>
 </head>
 <body>
-    <h1>注册表单</h1>
-    <form id="myForm" action="/api/worker" method="POST">
-        <label for="username">用户名8:</label>
-        <input type="text" id="username" name="username" required><br><br>
+  <h1>Submit Your Information</h1>
+  <form id="submitForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
 
-        <label for="email">电子邮件:</label>
-        <input type="email" id="email" name="email" required><br><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-        <div class="h-captcha" data-sitekey="0b8076f4-662e-4ad0-aff4-cc04496633ca"></div>
-        
-        <button type="submit">提交</button>
-    </form>
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" required></textarea>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const myForm = document.getElementById('myForm');
-            if (myForm) {
-                myForm.addEventListener('submit', async function(event) {
-                    event.preventDefault();
-                    const formData = new FormData(myForm);
-                    const response = await fetch(myForm.action, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const text = await response.text();
-                    alert(text);
-                });
-            }
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('submitForm');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+
+      try {
+        const response = await fetch('/api/submit', {
+          method: 'POST',
+          body: formData
         });
-    </script>
+
+        if (response.ok) {
+          const data = await response.json();
+          alert(data.message);
+          form.reset();
+        } else {
+          alert('Error submitting form. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    });
+  </script>
 </body>
 </html>
