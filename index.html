@@ -8,8 +8,8 @@
 </head>
 <body>
     <h1>注册表单</h1>
-    <form id="myForm" action="worker" method="POST">
-        <label for="username">用户名子:</label>
+    <form id="myForm" action="/worker" method="POST">
+        <label for="username">用户名8:</label>
         <input type="text" id="username" name="username" required><br><br>
 
         <label for="email">电子邮件:</label>
@@ -32,7 +32,6 @@
                         body: formData
                     });
                     const text = await response.text();
-                    // 显示后端返回的数据
                     alert(text);
                 });
             }
