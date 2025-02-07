@@ -20,6 +20,22 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    // Extract h-captcha token
+    const token = output['h-captcha-response'];
+    if (!token) {
+      return new Response('Captcha token is missing', { status: 400 });
+    }
+
+    // Verify h-captcha token
+    const secret = env.HCAPTCHA_SECRET; // 使用您的 h-captcha 秘钥
+    const verifyUrl = `https://hcaptcha.com/siteverify?secret=${secret}&response=${token}`;
+    const verifyResponse = await fetch(verifyUrl, { method: 'POST' });
+    const captchaResult = await verifyResponse.json();
+
+    if (!captchaResult.success) {
+      return new Response('Captcha verification failed', { status: 400 });
+    }
+
     // Extract user's IP address
     const userIp = request.headers.get('cf-connecting-ip') || 'unknown';
 
