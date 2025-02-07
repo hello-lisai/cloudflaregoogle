@@ -37,6 +37,7 @@ export async function onRequestPost({ request, env }) {
       },
     });
   } catch (err) {
+    console.error('Error:', err);
     return new Response(`Error: ${err.message}`, { status: 400 });
   }
 }
