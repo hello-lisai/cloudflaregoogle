@@ -18,7 +18,7 @@
     <label for="message">Message:</label>
     <textarea id="message" name="message" required></textarea>
 
-    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div> <!-- 将 'your-site-key' 替换为您的实际站点密钥 -->
+    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
 
     <button type="submit">Submit</button>
   </form>
@@ -29,15 +29,15 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      // 检查 h-captcha 是否已验证
-      const hCaptchaResponse = document.querySelector('.h-captcha [name="h-captcha-response"]').value;
-      if (!hCaptchaResponse) {
-        alert('请完成验证码验证');
-        return;
+      // 检查 hCaptcha 是否已完成
+      const hcaptchaResponse = hcaptcha.getResponse();
+      if (!hcaptchaResponse) {
+        alert('请完成人机验证！');
+        return; // 阻止表单提交
       }
 
       const formData = new FormData(event.target);
-      formData.append('h-captcha-response', hCaptchaResponse); // 添加 h-captcha 响应到表单数据
+      formData.append('h-captcha-response', hcaptchaResponse); // 将 hCaptcha 响应添加到表单数据中
 
       try {
         console.log('Submitting form data:', Object.fromEntries(formData.entries()));
@@ -51,6 +51,7 @@
           const data = await response.json();
           alert(data.message);
           form.reset();
+          hcaptcha.reset(); // 重置 hCaptcha
         } else {
           alert('Error submitting form. Please try again.');
         }
