@@ -1,15 +1,13 @@
-import { D1Database } from '@cloudflare/workers-d1';
-
 /**
  * POST /api/submit
  */
-export async function onRequestPost(context) {
-  if (context.request.method !== 'POST') {
+export async function onRequestPost({ request, env }) {
+  if (request.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    let input = await context.request.formData();
+    let input = await request.formData();
 
     // Convert FormData to JSON
     let output = {};
@@ -23,14 +21,14 @@ export async function onRequestPost(context) {
     }
 
     // Initialize D1 database
-    const db = new D1Database(context.env.D1_DATABASE);
+    const db = env.D1_DATABASE;
 
     // Prepare SQL query to insert data into the database
     const sql = `INSERT INTO submissions (username, email) VALUES (?, ?)`;
     const params = [output.username, output.email];
 
     // Execute SQL query
-    await db.execute(sql, params);
+    await db.prepare(sql).bind(...params).run();
 
     // Return success response
     return new Response(JSON.stringify({ message: 'Form submitted successfully' }), {
