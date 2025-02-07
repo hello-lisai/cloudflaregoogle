@@ -12,7 +12,7 @@ async function handleRequest(request) {
         const hcaptchaResponse = formData.get('h-captcha-response');
 
         // 验证 hCaptcha
-        const secretKey = '你的secret_key'; // 替换为您的密钥
+        const secretKey = 'ES_a0339c0289a44c9f895ef06be058d14f'; // 替换为您的密钥
         const verificationResponse = await fetch(`https://hcaptcha.com/siteverify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
