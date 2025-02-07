@@ -45,9 +45,8 @@
           console.log('Alert message:', data.message);
           alert(data.message);
 
-          // 生成一个随机值
-          const randomValue = Math.random().toString(36).substring(2, 15);
-          // 跳转到 help.html 页面，并附带随机值
+          // 使用后端返回的随机值进行跳转
+          const randomValue = data.randomValue; // 假设后端返回的随机值字段名为 randomValue
           window.location.href = `help.html?random=${randomValue}`;
         } else {
           alert('Error submitting form. Please try again.');
