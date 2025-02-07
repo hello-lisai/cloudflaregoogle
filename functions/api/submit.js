@@ -27,7 +27,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Verify h-captcha token
-    const secret = env.HCAPTCHA_SECRET; // 使用您的 h-captcha 秘钥
+    const secret = 'ES_2fe7d279e2474c25b2d6b213918fe463'; // 直接写入的 h-captcha 秘钥
     const verifyUrl = `https://hcaptcha.com/siteverify?secret=${secret}&response=${token}`;
     const verifyResponse = await fetch(verifyUrl, { method: 'POST' });
     const captchaResult = await verifyResponse.json();
