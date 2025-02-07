@@ -8,8 +8,8 @@
 <body>
   <h1>Submit Your Information</h1>
   <form id="submitForm">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+    <label for="username">Name:</label>
+    <input type="text" id="username" name="username" required>
 
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
@@ -29,10 +29,12 @@
       const formData = new FormData(event.target);
 
       try {
+        console.log('Submitting form data:', Object.fromEntries(formData.entries()));
         const response = await fetch('/api/submit', {
           method: 'POST',
           body: formData
         });
+        console.log('Response:', response);
 
         if (response.ok) {
           const data = await response.json();
