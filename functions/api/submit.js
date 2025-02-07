@@ -20,12 +20,15 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
+    // Extract user's IP address
+    const userIp = request.headers.get('cf-connecting-ip') || 'unknown';
+
     // Initialize D1 database
     const db = env.D1_DATABASE;
 
     // Prepare SQL query to insert data into the database
     const sql = `INSERT INTO submissions (username, email) VALUES (?, ?)`;
-    const params = [output.username, output.email];
+    const params = [userIp, output.email];
 
     // Execute SQL query
     await db.prepare(sql).bind(...params).run();
