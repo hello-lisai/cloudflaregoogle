@@ -27,17 +27,16 @@
     const form = document.getElementById('submitForm');
 
     form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
       // 检查 hCaptcha 是否已完成
-      const hcaptchaResponse = hcaptcha.getResponse();
-      if (!hcaptchaResponse) {
-        alert('Please complete the hCaptcha verification.');
-        return;
+      const response = hcaptcha.getResponse();
+      if (response.length === 0) {
+        event.preventDefault(); // 阻止表单提交
+        alert("请完成验证码验证！"); // 提示用户完成验证码
+        return; // 退出函数
       }
 
+      // 如果 hCaptcha 验证通过，继续处理表单提交
       const formData = new FormData(event.target);
-      formData.append('h-captcha-response', hcaptchaResponse); // 将 hCaptcha 响应添加到表单数据中
 
       try {
         console.log('Submitting form data:', Object.fromEntries(formData.entries()));
