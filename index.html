@@ -12,21 +12,46 @@
     <label for="address">Address:</label>
     <textarea id="address" name="address" required></textarea>
 
-    <label for="inviteCode">Invite Code:</label>
-    <input type="text" id="inviteCode" name="inviteCode" required>
+    <label for="inviteCode">Invite Code (optional):</label>
+    <input type="text" id="inviteCode" name="inviteCode">
 
     <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
 
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitButton">Submit</button>
   </form>
+  <p id="submitStatus"></p> <!-- 显示提交状态和时间 -->
 
   <script>
     const form = document.getElementById('submitForm');
+    const submitButton = document.getElementById('submitButton');
+    const submitStatus = document.getElementById('submitStatus');
+
+    // 检查是否已提交过并显示状态
+    function checkSubmissionStatus() {
+      const hasSubmitted = localStorage.getItem('hasSubmitted') === 'true';
+      const submitTime = localStorage.getItem('submitTime');
+
+      if (hasSubmitted) {
+        submitButton.disabled = true;
+        submitButton.textContent = '已提交';
+        if (submitTime) {
+          const date = new Date(submitTime);
+          submitStatus.textContent = `您已于 ${date.toLocaleString()} 提交成功，无法再次提交！`;
+        } else {
+          submitStatus.textContent = '您已提交过，无法再次提交！';
+        }
+      } else {
+        submitStatus.textContent = ''; // 未提交时清空状态
+      }
+    }
+
+    // 页面加载时检查状态
+    checkSubmissionStatus();
 
     form.addEventListener('submit', async (event) => {
-      event.preventDefault(); // 阻止默认表单提交
+      event.preventDefault(); // 阻止默认提交
 
-      // 检查 hCaptcha 是否已完成
+      // 检查 hCaptcha
       const captchaResponse = hcaptcha.getResponse();
       if (captchaResponse.length === 0) {
         alert("请完成验证码验证！");
@@ -48,7 +73,14 @@
           const data = await fetchResponse.json();
           console.log('Alert message:', data.message);
           alert(data.message);
-          // 删除随机值跳转逻辑，仅显示消息
+
+          // 提交成功后记录状态和时间
+          const submitTime = new Date().toISOString();
+          localStorage.setItem('hasSubmitted', 'true');
+          localStorage.setItem('submitTime', submitTime);
+          submitButton.disabled = true;
+          submitButton.textContent = '已提交';
+          submitStatus.textContent = `您已于 ${new Date(submitTime).toLocaleString()} 提交成功！`;
         } else {
           alert('Error submitting form. Please try again.');
         }
