@@ -51,21 +51,27 @@ export async function onRequestPost({ request, env }) {
     // Get current timestamp
     const timestamp = new Date().toISOString();
 
-    // Generate a random value between 1 and 10
-    const randomValue = Math.floor(Math.random() * 10) + 1;
+    // Extract address and inviteCode
+    const address = output.address;
+    const inviteCode = output.inviteCode;
+
+    // Validate inputs
+    if (!address || !inviteCode) {
+      return new Response('Address or Invite Code is missing', { status: 400 });
+    }
 
     // Initialize D1 database
     const db = env.D1_DATABASE;
 
     // Prepare SQL query to insert data into the database
-    const sql = `INSERT INTO submissions (address, timestamp, ip, random_value) VALUES (?, ?, ?, ?)`;
-    const params = [output.address, timestamp, userIp, randomValue];
+    const sql = `INSERT INTO submissions (address, invite_code, timestamp, ip) VALUES (?, ?, ?, ?)`;
+    const params = [address, inviteCode, timestamp, userIp];
 
     // Execute SQL query
     await db.prepare(sql).bind(...params).run();
 
-    // Return success response with the random value
-    return new Response(JSON.stringify({ message: `你的随机值为 ${randomValue}` }), {
+    // Return success response
+    return new Response(JSON.stringify({ message: '提交成功！' }), {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
