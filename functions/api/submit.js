@@ -53,11 +53,11 @@ export async function onRequestPost({ request, env }) {
 
     // Extract address and inviteCode
     const address = output.address;
-    const inviteCode = output.inviteCode;
+    const inviteCode = output.inviteCode || ''; // 邀请码可以为空，默认为空字符串
 
-    // Validate inputs
-    if (!address || !inviteCode) {
-      return new Response('Address or Invite Code is missing', { status: 400 });
+    // Validate address (inviteCode 可为空，无需验证)
+    if (!address) {
+      return new Response('Address is missing', { status: 400 });
     }
 
     // Initialize D1 database
