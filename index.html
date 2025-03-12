@@ -12,7 +12,10 @@
     <label for="address">Address:</label>
     <textarea id="address" name="address" required></textarea>
 
-    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div> <!-- 将 'your-site-key' 替换为您的实际站点密钥 -->
+    <label for="inviteCode">Invite Code:</label>
+    <input type="text" id="inviteCode" name="inviteCode" required>
+
+    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
 
     <button type="submit">Submit</button>
   </form>
@@ -21,15 +24,16 @@
     const form = document.getElementById('submitForm');
 
     form.addEventListener('submit', async (event) => {
+      event.preventDefault(); // 阻止默认表单提交
+
       // 检查 hCaptcha 是否已完成
       const captchaResponse = hcaptcha.getResponse();
       if (captchaResponse.length === 0) {
-        event.preventDefault(); // 阻止表单提交
-        alert("请完成验证码验证！"); // 提示用户完成验证码
-        return; // 退出函数
+        alert("请完成验证码验证！");
+        return;
       }
 
-      // 如果 hCaptcha 验证通过，继续处理表单提交
+      // 获取表单数据
       const formData = new FormData(event.target);
 
       try {
@@ -44,10 +48,7 @@
           const data = await fetchResponse.json();
           console.log('Alert message:', data.message);
           alert(data.message);
-
-          // 使用后端返回的随机值进行跳转
-          const randomValue = data.randomValue; // 假设后端返回的随机值字段名为 randomValue
-          window.location.href = `help.html?random=${randomValue}`;
+          // 删除随机值跳转逻辑，仅显示消息
         } else {
           alert('Error submitting form. Please try again.');
         }
