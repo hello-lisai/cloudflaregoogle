@@ -5,43 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submission Form</title>
   <script src="https://hcaptcha.com/1/api.js" async defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 20px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #555;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #submitStatus {
+      text-align: center;
+      color: #e74c3c;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .h-captcha {
+      margin: 15px 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>Submit Your Address</h1>
-  <form id="submitForm">
-    <label for="address">Address:</label>
-    <textarea id="address" name="address" required></textarea>
+  <div class="container">
+    <h1>Submit Your Address</h1>
+    <form id="submitForm">
+      <label for="address">Address:</label>
+      <textarea id="address" name="address" required></textarea>
 
-    <label for="inviteCode">Invite Code (optional):</label>
-    <input type="text" id="inviteCode" name="inviteCode">
+      <label for="inviteCode">Invite Code (optional):</label>
+      <input type="text" id="inviteCode" name="inviteCode">
 
-    <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
+      <div class="h-captcha" data-sitekey="768a24e8-55b8-450c-b54c-a394df78e388"></div>
 
-    <button type="submit" id="submitButton">Submit</button>
-  </form>
-  <p id="submitStatus"></p> <!-- 显示提交状态和时间 -->
+      <button type="submit" id="submitButton">Submit</button>
+    </form>
+    <p id="submitStatus"></p>
+  </div>
 
   <script>
     const form = document.getElementById('submitForm');
     const submitButton = document.getElementById('submitButton');
     const submitStatus = document.getElementById('submitStatus');
 
-    // 检查是否已提交过并显示状态
+    // 检查是否已提交过，仅记录状态，不改变按钮
     function checkSubmissionStatus() {
       const hasSubmitted = localStorage.getItem('hasSubmitted') === 'true';
-      const submitTime = localStorage.getItem('submitTime');
-
+      // 不禁用按钮，保持可点击，让恶意用户以为还能提交
       if (hasSubmitted) {
-        submitButton.disabled = true;
-        submitButton.textContent = '已提交';
-        if (submitTime) {
-          const date = new Date(submitTime);
-          submitStatus.textContent = `您已于 ${date.toLocaleString()} 提交成功，无法再次提交！`;
-        } else {
-          submitStatus.textContent = '您已提交过，无法再次提交！';
-        }
-      } else {
-        submitStatus.textContent = ''; // 未提交时清空状态
+        submitButton.textContent = 'Submit'; // 保持初始文本，迷惑用户
       }
     }
 
@@ -50,6 +107,15 @@
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // 阻止默认提交
+
+      // 检查是否已提交
+      const hasSubmitted = localStorage.getItem('hasSubmitted') === 'true';
+      if (hasSubmitted) {
+        // 重复提交时，假装成功
+        alert('提交成功！');
+        submitStatus.textContent = ''; // 不显示额外信息
+        return;
+      }
 
       // 检查 hCaptcha
       const captchaResponse = hcaptcha.getResponse();
@@ -74,13 +140,11 @@
           console.log('Alert message:', data.message);
           alert(data.message);
 
-          // 提交成功后记录状态和时间
+          // 第一次提交成功后记录状态和时间
           const submitTime = new Date().toISOString();
           localStorage.setItem('hasSubmitted', 'true');
           localStorage.setItem('submitTime', submitTime);
-          submitButton.disabled = true;
-          submitButton.textContent = '已提交';
-          submitStatus.textContent = `您已于 ${new Date(submitTime).toLocaleString()} 提交成功！`;
+          submitStatus.textContent = ''; // 成功提交后不显示信息
         } else {
           alert('Error submitting form. Please try again.');
         }
